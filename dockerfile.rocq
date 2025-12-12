@@ -1,0 +1,17 @@
+#FROM ocaml/opam:opensuse-42.2_ocaml-4.06.0_flambda
+FROM ocaml/opam:opensuse
+
+RUN sudo zypper install -y gmp-devel
+
+RUN set -x \
+    && opam init \
+    && eval $(opam env) \
+    && opam pin add rocq-prover 9.0.0 \
+    && eval $(opam env) \
+    && opam install vsrocq-language-server \
+    && eval $(opam env) \
+    && opam install -y coq coq-core coq-stdlib coqide-server \
+    && echo "eval $(opam env)" >  opam_env.sh \
+    && chmod 777 opam_env.sh
+
+ENTRYPOINT [ "./opam_env.sh" ]
